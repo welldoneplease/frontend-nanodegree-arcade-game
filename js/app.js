@@ -19,7 +19,7 @@ var Enemy = function() {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
-}
+};
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -37,12 +37,12 @@ Enemy.prototype.update = function(dt) {
 
     // update the enemy position based on its speed
     this.x += dt*this.speed;
-}
+};
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-}
+};
 
 // Enemy reset
 Enemy.prototype.reset = function() {
@@ -50,7 +50,7 @@ Enemy.prototype.reset = function() {
   this.x = -101;
   this.y = rows[Math.floor(Math.random()*rows.length)];
   this.speed = rows[Math.floor(Math.random()*rows.length)];
-}
+};
 
 // Now write your own player class
 // This class requires an update(), render() and
@@ -62,8 +62,26 @@ var Player = function() {
   this.sprite = 'images/char-boy.png';
 };
 
-Player.prototype.update = function() {
-
+Player.prototype.update = function(dir) {
+  // pass direction to switch case statements
+  // make sure player isn't leaving boundaries
+  // only then update player position
+  switch (dir) {
+    case 'up':
+      if (this.y > 48) { this.y -= 83; }
+      break;
+    case 'down':
+      if (this.y < 380) { this.y += 83; }
+      break;
+    case 'left':
+      if (this.x > 0) { this.x -= 101; }
+      break;
+    case 'right':
+      if (this.x < 404) { this.x += 101; }
+      break;
+    case 'default':
+      console.log('no direction specified');
+  }
 };
 
 Player.prototype.render = function() {
@@ -71,26 +89,8 @@ Player.prototype.render = function() {
 };
 
 Player.prototype.handleInput = function(e) {
-  if (e === 'up') {
-    if (this.y > 48) {
-      this.y -= 83;
-    }
-  }
-  if (e === 'down') {
-    if (this.y < 380) {
-      this.y += 83;
-    }
-  }
-  if (e === 'left') {
-    if (this.x > 0) {
-      this.x -= 101;
-    }
-  }
-  if (e === 'right') {
-    if (this.x < 404) {
-      this.x += 101;
-    }
-  }
+  // pass the input along to update method
+  this.update(e);
 };
 
 
