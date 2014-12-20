@@ -80,7 +80,7 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+        checkCollisions();
     }
 
     /* This is called by the update function  and loops through all of the
@@ -95,6 +95,23 @@ var Engine = (function(global) {
             enemy.update(dt);
         });
         player.update();
+    }
+
+    function checkCollisions() {
+      allEnemies.forEach(function(enemy) {
+        // bounding box hit detection snippet (sans spatial partitioning madness):
+        // http://blog.sklambert.com/html5-canvas-game-2d-collision-detection
+
+        //if (object1.x < object2.x + object2.width  && object1.x + object1.width  > object2.x &&
+              //object1.y < object2.y + object2.height && object1.y + object1.height > object2.y) {
+          // The objects are touching
+        // }
+
+        if (enemy.x < player.x + 50  && enemy.x + 65 > player.x &&
+          enemy.y < player.y + 20 && enemy.y + 20 > player.y) {
+            alert("you are dead!");
+        }
+      });
     }
 
     /* This function initially draws the "game level", it will then call
