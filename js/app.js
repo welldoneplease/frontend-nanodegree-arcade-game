@@ -13,8 +13,9 @@ var Enemy = function() {
     // randomly select one of the rows to 'spawn' enemies in
     this.y = rows[Math.floor(Math.random()*rows.length)];
 
-    // why not also use the row array to have 3 different speeds...
-    this.speed = rows[Math.floor(Math.random()*rows.length)];
+    // give the enemy some random speed between 100 - 300
+    // which seems like a fair enough speed...
+    this.speed = Math.floor(Math.random() * (300 - 100)) + 100;
 
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
@@ -49,7 +50,6 @@ Enemy.prototype.reset = function() {
   var rows = [60, 143, 226];
   this.x = -101;
   this.y = rows[Math.floor(Math.random()*rows.length)];
-  this.speed = rows[Math.floor(Math.random()*rows.length)];
 };
 
 // Now write your own player class
@@ -57,6 +57,7 @@ Enemy.prototype.reset = function() {
 // a handleInput() method.
 var Player = function() {
   // player starts in lawn center position
+  this.key = false;
   this.x = 202;
   this.y = 380;
   this.sprite = 'images/char-boy.png';
@@ -68,7 +69,12 @@ Player.prototype.update = function(dir) {
   // only then update player position
   switch (dir) {
     case 'up':
-      if (this.y > 48) { this.y -= 83; }
+      if (this.y > 48 ) {
+        this.y -= 83;
+      } else if (this.x === exit.x) {
+        this.y -= 83;
+        this.exits();
+      }
       break;
     case 'down':
       if (this.y < 380) { this.y += 83; }
@@ -88,6 +94,11 @@ Player.prototype.render = function() {
   ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+Player.prototype.exits = function() {
+  delete exit.sprite2;
+  this.key = true;
+};
+
 Player.prototype.handleInput = function(e) {
   // pass the input along to update method
   this.update(e);
@@ -97,6 +108,7 @@ Player.prototype.reset = function() {
   // put player back to starting position
   this.x = 202;
   this.y = 380;
+  this.key = false;
 };
 
 var Exit = function() {
@@ -104,12 +116,23 @@ var Exit = function() {
   this.y = -25;
   this.sprite1 = 'images/Rock.png';
   this.sprite2 = 'images/Key.png';
-}
+};
+
+Exit.prototype.reset = function() {
+  this.x = [0, 101, 202, 303, 404][Math.floor(Math.random()*5)];
+  this.y = -25;
+  this.sprite1 = 'images/Rock.png';
+  this.sprite2 = 'images/Key.png';
+};
 
 Exit.prototype.render = function() {
   ctx.drawImage(Resources.get(this.sprite1), this.x, this.y);
-  ctx.drawImage(Resources.get(this.sprite2), this.x, this.y);
-}
+  // render key only if available!
+  // remove key when player stands on rock
+  if(this.sprite2) {
+    ctx.drawImage(Resources.get(this.sprite2), this.x, this.y);
+  }
+};
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
@@ -117,12 +140,18 @@ Exit.prototype.render = function() {
 var player = new Player();
 var exit = new Exit();
 var allEnemies = [];
+var level = 1;
 
 // for now spawning 3 enemies hardcoded
 // TODO: have some variable enemy numbers?
-for (var i = 0; i < 3; i++) {
-  allEnemies.push(new Enemy());
+function initializeEnemies() {
+  allEnemies = [];
+  for (var i = 0; i < level; i++) {
+    allEnemies.push(new Enemy());
+  }
 }
+
+initializeEnemies();
 
 
 // This listens for key presses and sends the keys to your
