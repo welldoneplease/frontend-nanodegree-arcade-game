@@ -93,11 +93,29 @@ Player.prototype.handleInput = function(e) {
   this.update(e);
 };
 
+Player.prototype.reset = function() {
+  // put player back to starting position
+  this.x = 202;
+  this.y = 380;
+};
+
+var Exit = function() {
+  this.x = [0, 101, 202, 303, 404][Math.floor(Math.random()*5)];
+  this.y = -25;
+  this.sprite1 = 'images/Rock.png';
+  this.sprite2 = 'images/Key.png';
+}
+
+Exit.prototype.render = function() {
+  ctx.drawImage(Resources.get(this.sprite1), this.x, this.y);
+  ctx.drawImage(Resources.get(this.sprite2), this.x, this.y);
+}
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 var player = new Player();
+var exit = new Exit();
 var allEnemies = [];
 
 // for now spawning 3 enemies hardcoded
