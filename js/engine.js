@@ -109,7 +109,8 @@ var Engine = (function(global) {
 
         if (enemy.x < player.x + 50  && enemy.x + 65 > player.x &&
           enemy.y < player.y + 20 && enemy.y + 20 > player.y) {
-            alert("you are dead!");
+            alert("You are dead!");
+            reset();
         }
       });
     }
@@ -169,6 +170,7 @@ var Engine = (function(global) {
             enemy.render();
         });
 
+        exit.render();
         player.render();
     }
 
@@ -177,7 +179,10 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        // noop
+      allEnemies.forEach(function(enemy) {
+        enemy.reset();
+      });
+      player.reset();
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -188,6 +193,8 @@ var Engine = (function(global) {
         'images/stone-block.png',
         'images/water-block.png',
         'images/grass-block.png',
+        'images/Rock.png',
+        'images/Key.png',
         'images/enemy-bug.png',
         'images/char-boy.png'
     ]);
