@@ -57,7 +57,7 @@ var Engine = (function(global) {
          * function again as soon as the browser is able to draw another frame.
          */
         win.requestAnimationFrame(main);
-    };
+    }
 
     /* This function does some initial setup that should only occur once,
      * particularly setting the lastTime variable that is required for the
@@ -81,6 +81,7 @@ var Engine = (function(global) {
     function update(dt) {
         updateEntities(dt);
         checkCollisions();
+        checkProgress();
     }
 
     /* This is called by the update function  and loops through all of the
@@ -179,10 +180,22 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-      allEnemies.forEach(function(enemy) {
-        enemy.reset();
-      });
+      level = 1;
+      initializeEnemies();
+      exit.reset();
       player.reset();
+    }
+
+    function checkProgress() {
+      if (player.key) {
+        level += 1;
+        allEnemies.forEach(function(enemy) {
+          enemy.reset();
+        });
+        exit.reset();
+        initializeEnemies();
+        player.reset();
+      }
     }
 
     /* Go ahead and load all of the images we know we're going to need to
