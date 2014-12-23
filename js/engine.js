@@ -29,6 +29,14 @@ var Engine = (function(global) {
     canvas.height = 606;
     doc.body.appendChild(canvas);
 
+    doc.addEventListener('click', function() {
+      if (gameover) {
+        gameover = false;
+        reset();
+        main();
+      }
+    }, false);
+
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
      */
@@ -39,6 +47,7 @@ var Engine = (function(global) {
          * would be the same for everyone (regardless of how fast their
          * computer is) - hurray time!
          */
+        console.log(">>>")
         var now = Date.now(),
             dt = (now - lastTime) / 1000.0;
 
@@ -56,7 +65,9 @@ var Engine = (function(global) {
         /* Use the browser's requestAnimationFrame function to call this
          * function again as soon as the browser is able to draw another frame.
          */
-        win.requestAnimationFrame(main);
+        if (!gameover) {
+          win.requestAnimationFrame(main);
+        }
     }
 
     /* This function does some initial setup that should only occur once,
@@ -110,8 +121,10 @@ var Engine = (function(global) {
 
         if (enemy.x < player.x + 50  && enemy.x + 65 > player.x &&
           enemy.y < player.y + 20 && enemy.y + 20 > player.y) {
-            alert("You are dead!");
-            reset();
+            gameover = true;
+            if (highscore < level) {
+              highscore = level;
+            }
         }
       });
     }
@@ -173,6 +186,21 @@ var Engine = (function(global) {
 
         exit.render();
         player.render();
+        ctx.font = "20px Arial";
+        ctx.fillText("Level: "+level, 5, 580);
+        ctx.font = "20px Arial";
+        ctx.fillText("HS: "+highscore, 450, 580);
+        if(gameover) {
+          ctx.fillStyle = "red";
+          ctx.strokeStyle = "grey";
+          ctx.lineWidth = 1;
+          ctx.font = "40px Arial";
+          ctx.fillText("You are dead!", 120, canvas.height/2);
+          ctx.strokeText("You are dead!", 120, canvas.height/2);
+          ctx.font = "20px Arial";
+          ctx.fillText("Click anywhere to restart", 140, canvas.height/2 + 20);
+          ctx.strokeText("Click anywhere to restart", 140, canvas.height/2 + 20);
+        }
     }
 
     /* This function does nothing but it could have been a good place to
@@ -209,7 +237,7 @@ var Engine = (function(global) {
         'images/Rock.png',
         'images/Key.png',
         'images/enemy-bug.png',
-        'images/char-boy.png'
+        'images/char-cat-girl.png'
     ]);
     Resources.onReady(init);
 
