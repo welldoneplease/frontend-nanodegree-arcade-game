@@ -60,7 +60,7 @@ var Player = function() {
   this.key = false;
   this.x = 202;
   this.y = 380;
-  this.sprite = 'images/char-boy.png';
+  this.sprite = 'images/char-cat-girl.png';
 };
 
 Player.prototype.update = function(dir) {
@@ -71,6 +71,8 @@ Player.prototype.update = function(dir) {
     case 'up':
       if (this.y > 48 ) {
         this.y -= 83;
+      // player stands underneath the rock
+      // let him jump up one square
       } else if (this.x === exit.x) {
         this.y -= 83;
         this.exits();
@@ -95,6 +97,7 @@ Player.prototype.render = function() {
 };
 
 Player.prototype.exits = function() {
+  // player stands on the rock and got the key
   delete exit.sprite2;
   this.key = true;
 };
@@ -112,6 +115,7 @@ Player.prototype.reset = function() {
 };
 
 var Exit = function() {
+  // make sure the rock appear on a random spot
   this.x = [0, 101, 202, 303, 404][Math.floor(Math.random()*5)];
   this.y = -25;
   this.sprite1 = 'images/Rock.png';
@@ -127,23 +131,21 @@ Exit.prototype.reset = function() {
 
 Exit.prototype.render = function() {
   ctx.drawImage(Resources.get(this.sprite1), this.x, this.y);
-  // render key only if available!
+  // render key only if available
   // remove key when player stands on rock
   if(this.sprite2) {
     ctx.drawImage(Resources.get(this.sprite2), this.x, this.y);
   }
 };
 
-// Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
-var player = new Player();
-var exit = new Exit();
-var allEnemies = [];
-var level = 1;
+// instantiate our classes
+var player = new Player(),
+    exit = new Exit(),
+    allEnemies = [],
+    gameover = false,
+    highscore = 0,
+    level = 1;
 
-// for now spawning 3 enemies hardcoded
-// TODO: have some variable enemy numbers?
 function initializeEnemies() {
   allEnemies = [];
   for (var i = 0; i < level; i++) {
