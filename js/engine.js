@@ -188,6 +188,7 @@ var Engine = (function(global) {
 
         exit.render();
         player.render();
+
         displayOnscreenText({
           fillText: {
             fillStyle: "white",
@@ -247,13 +248,17 @@ var Engine = (function(global) {
     // to the next higher level - resets all game entities and increments level
     function checkProgress() {
       if (player.key) {
-        level += 1;
-        allEnemies.forEach(function(enemy) {
-          enemy.reset();
-        });
-        exit.reset();
-        initializeEnemies();
-        player.reset();
+        player.key = false;
+        player.enableInput = false;
+        setTimeout(function() {
+          level += 1;
+          allEnemies.forEach(function(enemy) {
+            enemy.reset();
+          });
+          exit.reset();
+          initializeEnemies();
+          player.reset();
+        },2000);
       }
     }
 

@@ -57,6 +57,7 @@ Enemy.prototype.reset = function() {
 // a handleInput() method.
 var Player = function() {
   // player starts in lawn center position
+  this.enableInput = true;
   this.key = false;
   this.x = 202;
   this.y = 380;
@@ -67,28 +68,30 @@ Player.prototype.update = function(dir) {
   // pass direction to switch case statements
   // make sure player isn't leaving boundaries
   // only then update player position
-  switch (dir) {
-    case 'up':
-      if (this.y > 48 ) {
-        this.y -= 83;
-      // player stands underneath the rock
-      // let him jump up one square
-      } else if (this.x === exit.x) {
-        this.y -= 83;
-        this.exits();
-      }
-      break;
-    case 'down':
-      if (this.y < 380) { this.y += 83; }
-      break;
-    case 'left':
-      if (this.x > 0) { this.x -= 101; }
-      break;
-    case 'right':
-      if (this.x < 404) { this.x += 101; }
-      break;
-    case 'default':
-      console.log('no direction specified');
+  if (this.enableInput) {
+    switch (dir) {
+      case 'up':
+        if (this.y > 48 ) {
+          this.y -= 83;
+        // player stands underneath the rock
+        // let him jump up one square
+        } else if (this.x === exit.x) {
+          this.y -= 83;
+          this.exits();
+        }
+        break;
+      case 'down':
+        if (this.y < 380) { this.y += 83; }
+        break;
+      case 'left':
+        if (this.x > 0) { this.x -= 101; }
+        break;
+      case 'right':
+        if (this.x < 404) { this.x += 101; }
+        break;
+      case 'default':
+        console.log('no direction specified');
+    }
   }
 };
 
@@ -112,6 +115,7 @@ Player.prototype.reset = function() {
   this.x = 202;
   this.y = 380;
   this.key = false;
+  this.enableInput = true;
 };
 
 var Exit = function() {
