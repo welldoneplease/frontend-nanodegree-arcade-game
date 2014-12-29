@@ -127,6 +127,10 @@ Exit.prototype.reset = function() {
   this.y = -25;
   this.sprite1 = 'images/Rock.png';
   this.sprite2 = 'images/Key.png';
+
+  // to clean key on upper screen
+  ctx.fillStyle = "white";
+  ctx.fillRect(0,0,505,50);
 };
 
 Exit.prototype.render = function() {
