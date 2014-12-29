@@ -250,6 +250,9 @@ var Engine = (function(global) {
       if (player.key) {
         player.key = false;
         player.enableInput = false;
+        allEnemies.forEach(function(enemy) {
+          enemy.slowMo();
+        });
         setTimeout(function() {
           level += 1;
           allEnemies.forEach(function(enemy) {
