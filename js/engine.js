@@ -29,6 +29,9 @@ var Engine = (function(global) {
     canvas.height = 606;
     doc.body.appendChild(canvas);
 
+    // once the game reaches 'gameover' state
+    // we need to be able to reset and restart the game
+    // this click handler does just that
     doc.addEventListener('click', function() {
       if (gameover) {
         gameover = false;
@@ -47,7 +50,6 @@ var Engine = (function(global) {
          * would be the same for everyone (regardless of how fast their
          * computer is) - hurray time!
          */
-        console.log(">>>")
         var now = Date.now(),
             dt = (now - lastTime) / 1000.0;
 
@@ -186,20 +188,47 @@ var Engine = (function(global) {
 
         exit.render();
         player.render();
-        ctx.font = "20px Arial";
-        ctx.fillText("Level: "+level, 5, 580);
-        ctx.font = "20px Arial";
-        ctx.fillText("HS: "+highscore, 450, 580);
+        displayOnscreenText({
+          fillText: {
+            fillStyle: "white",
+            font: "15px Arial",
+            text: "Level: "+level,
+            x: 5,
+            y: 562
+          },
+            strokeText: false
+        },{
+            fillStyle: "white",
+            font: "15px Arial",
+          fillText: {
+            text: "HighScore: "+highscore,
+            x: 5,
+            y: 580
+          },
+            strokeText: false
+        });
+
         if(gameover) {
-          ctx.fillStyle = "red";
-          ctx.strokeStyle = "grey";
-          ctx.lineWidth = 1;
-          ctx.font = "40px Arial";
-          ctx.fillText("You are dead!", 120, canvas.height/2);
-          ctx.strokeText("You are dead!", 120, canvas.height/2);
-          ctx.font = "20px Arial";
-          ctx.fillText("Click anywhere to restart", 140, canvas.height/2 + 20);
-          ctx.strokeText("Click anywhere to restart", 140, canvas.height/2 + 20);
+          displayOnscreenText({
+            fillStyle: "white",
+            strokeStyle: "black",
+            lineWidth: 1,
+            font: "56px Arial",
+            fillText: {
+              text: "You are dead!",
+              x: 80,
+              y: 270
+            },
+            strokeText: true
+          },{
+            font: "30px Arial",
+            fillText: {
+              text: "Click anywhere to restart",
+              x: 90,
+              y: 350
+            },
+            strokeText: true
+          });
         }
     }
 
@@ -214,6 +243,8 @@ var Engine = (function(global) {
       player.reset();
     }
 
+    // This function checks if the player did get the key and should progress
+    // to the next higher level - resets all game entities and increments level
     function checkProgress() {
       if (player.key) {
         level += 1;
@@ -223,6 +254,21 @@ var Engine = (function(global) {
         exit.reset();
         initializeEnemies();
         player.reset();
+      }
+    }
+
+    function displayOnscreenText() {
+      for(var config in arguments) {
+        var c = arguments[config] || {};
+
+        ctx.fillStyle = c.fillStyle;
+        ctx.strokeStyle = c.strokeStyle;
+        ctx.lineWidth = c.lineWidth;
+        ctx.font = c.font;
+        ctx.fillText(c.fillText.text, c.fillText.x, c.fillText.y);
+        if (c.strokeText) {
+          ctx.strokeText(c.fillText.text, c.fillText.x, c.fillText.y);
+        }
       }
     }
 
