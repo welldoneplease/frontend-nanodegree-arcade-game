@@ -33,11 +33,11 @@ var Engine = (function(global) {
     // we need to be able to reset and restart the game
     // this click handler does just that
     doc.addEventListener('click', function() {
-      if (gameover) {
-        gameover = false;
-        reset();
-        main();
-      }
+        if (gameover) {
+            gameover = false;
+            reset();
+            main();
+        }
     }, false);
 
     /* This function serves as the kickoff point for the game loop itself
@@ -66,9 +66,10 @@ var Engine = (function(global) {
 
         /* Use the browser's requestAnimationFrame function to call this
          * function again as soon as the browser is able to draw another frame.
+         * But ONLY if the gamestate isn't 'gameover'
          */
         if (!gameover) {
-          win.requestAnimationFrame(main);
+            win.requestAnimationFrame(main);
         }
     }
 
@@ -83,13 +84,7 @@ var Engine = (function(global) {
     }
 
     /* This function is called by main (our game loop) and itself calls all
-     * of the functions which may need to update entity's data. Based on how
-     * you implement your collision detection (when two entities occupy the
-     * same space, for instance when your character should die), you may find
-     * the need to add an additional function call here. For now, we've left
-     * it commented out - you may or may not want to implement this
-     * functionality this way (you could just implement collision detection
-     * on the entities themselves within your app.js file).
+     * of the functions which may need to update entity's data.
      */
     function update(dt) {
         updateEntities(dt);
@@ -97,12 +92,10 @@ var Engine = (function(global) {
         checkProgress();
     }
 
-    /* This is called by the update function  and loops through all of the
-     * objects within your allEnemies array as defined in app.js and calls
-     * their update() methods. It will then call the update function for your
-     * player object. These update methods should focus purely on updating
-     * the data/properties related to  the object. Do your drawing in your
-     * render methods.
+    /* This is called by the update function and loops through all of the
+     * objects within allEnemies array as defined in app.js and calls
+     * their update() methods. It will then call the update function for the
+     * player object.
      */
     function updateEntities(dt) {
         allEnemies.forEach(function(enemy) {
@@ -111,31 +104,26 @@ var Engine = (function(global) {
         player.update();
     }
 
+
+    /* This is called every tick to ensure that the game ends when the player
+     * is hit by one of the enemies.
+     */
     function checkCollisions() {
-      allEnemies.forEach(function(enemy) {
-        // bounding box hit detection snippet (sans spatial partitioning madness):
-        // http://blog.sklambert.com/html5-canvas-game-2d-collision-detection
-
-        //if (object1.x < object2.x + object2.width  && object1.x + object1.width  > object2.x &&
-              //object1.y < object2.y + object2.height && object1.y + object1.height > object2.y) {
-          // The objects are touching
-        // }
-
-        if (enemy.x < player.x + 50  && enemy.x + 65 > player.x &&
-          enemy.y < player.y + 20 && enemy.y + 20 > player.y) {
-            gameover = true;
-            if (highscore < level) {
-              highscore = level;
+        allEnemies.forEach(function(enemy) {
+            // bounding box hit detection snippet (sans spatial partitioning madness):
+            // http://blog.sklambert.com/html5-canvas-game-2d-collision-detection
+            if (enemy.x < player.x + 50 && enemy.x + 65 > player.x &&
+                enemy.y < player.y + 20 && enemy.y + 20 > player.y) {
+                gameover = true;
+                if (highscore < level) {
+                    highscore = level;
+                }
             }
-        }
-      });
+        });
     }
 
     /* This function initially draws the "game level", it will then call
-     * the renderEntities function. Remember, this function is called every
-     * game tick (or loop of the game engine) because that's how games work -
-     * they are flipbooks creating the illusion of animation but in reality
-     * they are just drawing the entire screen over and over.
+     * the renderEntities function.
      */
     function render() {
         /* This array holds the relative URL to the image used
@@ -170,7 +158,6 @@ var Engine = (function(global) {
             }
         }
 
-
         renderEntities();
     }
 
@@ -180,7 +167,7 @@ var Engine = (function(global) {
      */
     function renderEntities() {
         /* Loop through all of the objects within the allEnemies array and call
-         * the render function you have defined.
+         * their render function.
          */
         allEnemies.forEach(function(enemy) {
             enemy.render();
@@ -190,94 +177,100 @@ var Engine = (function(global) {
         player.render();
 
         displayOnscreenText({
-          fillText: {
             fillStyle: "white",
             font: "15px Arial",
-            text: "Level: "+level,
-            x: 5,
-            y: 562
-          },
+            fillText: {
+                text: "Level: "+level,
+                x: 5,
+                y: 562
+            },
             strokeText: false
         },{
             fillStyle: "white",
             font: "15px Arial",
-          fillText: {
-            text: "HighScore: "+highscore,
-            x: 5,
-            y: 580
-          },
+            fillText: {
+                text: "HighScore: "+highscore,
+                x: 5,
+                y: 580
+            },
             strokeText: false
         });
 
         if(gameover) {
-          displayOnscreenText({
-            fillStyle: "white",
-            strokeStyle: "black",
-            lineWidth: 1,
-            font: "56px Arial",
-            fillText: {
-              text: "You are dead!",
-              x: 80,
-              y: 270
-            },
-            strokeText: true
-          },{
-            font: "30px Arial",
-            fillText: {
-              text: "Click anywhere to restart",
-              x: 90,
-              y: 350
-            },
-            strokeText: true
-          });
+            displayOnscreenText({
+                fillStyle: "white",
+                strokeStyle: "black",
+                lineWidth: 1,
+                font: "56px Arial",
+                fillText: {
+                    text: "You are dead!",
+                    x: 80,
+                    y: 270
+                },
+                strokeText: true
+            },{
+                font: "30px Arial",
+                fillText: {
+                    text: "Click anywhere to restart",
+                    x: 90,
+                    y: 350
+                },
+                strokeText: true
+            });
         }
     }
 
-    /* This function does nothing but it could have been a good place to
-     * handle game reset states - maybe a new game menu or a game over screen
-     * those sorts of things. It's only called once by the init() method.
+    /* This function handles game resets.
+     * It resets the level counter, player and exit entities
+     * and reinitializes the enemies array.
      */
     function reset() {
-      level = 1;
-      initializeEnemies();
-      exit.reset();
-      player.reset();
+        level = 1;
+        initializeEnemies();
+        exit.reset();
+        player.reset();
     }
 
-    // This function checks if the player did get the key and should progress
-    // to the next higher level - resets all game entities and increments level
+    /* This function checks if the player did get the key and should progress
+     * to the next higher level - resets all game entities and increments level
+     */
     function checkProgress() {
-      if (player.key) {
-        player.key = false;
-        player.enableInput = false;
-        allEnemies.forEach(function(enemy) {
-          enemy.slowMo();
-        });
-        setTimeout(function() {
-          level += 1;
-          allEnemies.forEach(function(enemy) {
-            enemy.reset();
-          });
-          exit.reset();
-          initializeEnemies();
-          player.reset();
-        },2000);
-      }
+        if (player.key) {
+            player.key = false;
+            player.enableInput = false;
+            allEnemies.forEach(function(enemy) {
+                enemy.slowMo();
+            });
+            setTimeout(function() {
+                level += 1;
+                allEnemies.forEach(function(enemy) {
+                    enemy.reset();
+                });
+                exit.reset();
+                initializeEnemies();
+                player.reset();
+            }, 1000);
+        }
     }
 
+    /* Helper function to render text on screen
+     * takes as a param multiple texxt config objects
+     * and loops through them.
+     */
     function displayOnscreenText() {
-      for(var config in arguments) {
-        var c = arguments[config] || {};
+        for(var config in arguments) {
+            var c = arguments[config] || {};
 
-        ctx.fillStyle = c.fillStyle;
-        ctx.strokeStyle = c.strokeStyle;
-        ctx.lineWidth = c.lineWidth;
-        ctx.font = c.font;
-        ctx.fillText(c.fillText.text, c.fillText.x, c.fillText.y);
-        if (c.strokeText) {
-          ctx.strokeText(c.fillText.text, c.fillText.x, c.fillText.y);
+            ctx.fillStyle = c.fillStyle;
+            ctx.strokeStyle = c.strokeStyle;
+            ctx.lineWidth = c.lineWidth;
+            ctx.font = c.font;
+            ctx.fillText(c.fillText.text, c.fillText.x, c.fillText.y);
+
+            if (c.strokeText) {
+                ctx.strokeText(c.fillText.text, c.fillText.x, c.fillText.y);
+            }
         }
-      }
     }
 
     /* Go ahead and load all of the images we know we're going to need to
