@@ -1,6 +1,12 @@
 Welldonepleases froggerClone
 ===============================
 
+Set Up
+---
+- Clone repository
+- Open 'index.html' in your favorite browser
+  tested in Chrome/ Chromium/ Firefox
+
 Goal
 ----
 Reach the key on the rock!
